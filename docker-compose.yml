@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"  # Maps EC2 port 3000 to container's Nginx port 80
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+
