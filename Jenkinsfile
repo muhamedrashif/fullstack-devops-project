@@ -1,9 +1,14 @@
 pipeline {
     agent any
 
+    options {
+        timestamps()  // Adds timestamps to each step
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
+                echo "📥 Checking out the code..."
                 git 'https://github.com/muhamedrashif/fullstack-devops-project.git'
             }
         }
@@ -11,9 +16,8 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('backend') {
-                    sh 'npm install'
-                    // Optional: Uncomment the next line if you have tests
-                    // sh 'npm test'
+                    echo "📦 Installing backend dependencies..."
+                    sh 'npm install --legacy-peer-deps'
                 }
             }
         }
@@ -21,7 +25,10 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 dir('frontend') {
-                    sh 'npm install'
+                    echo "📦 Installing frontend dependencies..."
+                    sh 'npm install --legacy-peer-deps'
+
+                    echo "🔨 Building frontend..."
                     sh 'npm run build'
                 }
             }
@@ -29,20 +36,35 @@ pipeline {
 
         stage('Deploy') {
             steps {
+                echo "🚀 Deploying application..."
+
                 sh '''
-                // Kill running backend if exists
+                set -e
+
+                echo "🛑 Killing existing backend (if any)..."
                 pkill node || true
 
-                // Start backend
+                echo "🟢 Starting backend with nohup..."
                 nohup node backend/index.js > backend.log 2>&1 &
-                echo "Backend started"
+                sleep 2
+                ps aux | grep node  // Check if backend started successfully
 
-                // Clear old frontend build and copy new one
+                echo "🧹 Cleaning old frontend build..."
                 sudo rm -rf /var/www/html/*
+
+                echo "📁 Copying new frontend build..."
                 sudo cp -r frontend/build/* /var/www/html/
-                echo "Frontend deployed"
+
+                echo "✅ Deployment complete."
                 '''
             }
+        }
+    }
+
+    post {
+        always {
+            echo "🧼 Cleaning up workspace..."
+            cleanWs()  // Clean Jenkins workspace after build
         }
     }
 }
