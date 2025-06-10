@@ -2,21 +2,19 @@ pipeline {
     agent any
 
     options {
-        timestamps()  // Adds timestamps to each step
+        timestamps()
     }
 
     stages {
         stage('Checkout Code') {
-            stage('Checkout Code') {
-    steps {
-        echo "📥 Force-checking out the main branch..."
-        checkout([$class: 'GitSCM',
-            branches: [[name: 'main']],
-            userRemoteConfigs: [[url: 'https://github.com/muhamedrashif/fullstack-devops-project.git']]
-        ])
-    }
-}
-}
+            steps {
+                echo "📥 Force-checking out the main branch..."
+                checkout([$class: 'GitSCM',
+                    branches: [[name: 'main']],
+                    userRemoteConfigs: [[url: 'https://github.com/muhamedrashif/fullstack-devops-project.git']]
+                ])
+            }
+        }
 
         stage('Build Backend') {
             steps {
@@ -69,7 +67,7 @@ pipeline {
     post {
         always {
             echo "🧼 Cleaning up workspace..."
-            cleanWs()  // Clean Jenkins workspace after build
+            cleanWs()
         }
     }
 }
