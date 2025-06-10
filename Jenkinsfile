@@ -12,7 +12,7 @@ pipeline {
       steps {
         dir('backend') {
           sh 'npm install'
-          # If you have tests, you can add: sh 'npm test'
+          // If you have tests, you can add: sh 'npm test'
         }
       }
     }
