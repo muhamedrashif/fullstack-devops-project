@@ -7,11 +7,16 @@ pipeline {
 
     stages {
         stage('Checkout Code') {
-            steps {
-                echo "📥 Checking out the code..."
-                git 'https://github.com/muhamedrashif/fullstack-devops-project.git'
-            }
-        }
+            stage('Checkout Code') {
+    steps {
+        echo "📥 Force-checking out the main branch..."
+        checkout([$class: 'GitSCM',
+            branches: [[name: 'main']],
+            userRemoteConfigs: [[url: 'https://github.com/muhamedrashif/fullstack-devops-project.git']]
+        ])
+    }
+}
+
 
         stage('Build Backend') {
             steps {
