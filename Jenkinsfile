@@ -27,10 +27,21 @@ pipeline {
     }
 
     stage('Deploy') {
-      steps {
-        echo 'Deployment step - add your deployment commands here'
-      }
-    }
+  steps {
+    sh '''
+    // Kill running backend if exists
+    pkill node || true
+
+    // Start backend
+    nohup node backend/index.js > backend.log 2>&1 &
+
+    // Clear old frontend build and copy new one
+    sudo rm -rf /var/www/html/*
+    sudo cp -r frontend/build/* /var/www/html/
+    '''
+  }
+}
+
   }
 }
 
