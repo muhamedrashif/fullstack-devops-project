@@ -16,7 +16,7 @@ pipeline {
         ])
     }
 }
-
+}
 
         stage('Build Backend') {
             steps {
