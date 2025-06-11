@@ -41,30 +41,22 @@ pipeline {
 }
 
         stage('Deploy') {
-            steps {
-                echo "🚀 Deploying application..."
+  steps {
+    sh '''
+      set -e
+      echo "🛑 Killing existing backend (if any)..."
+      pkill node || true
 
-                sh '''
-                set -e
+      echo "🟢 Starting backend with nohup..."
+      sleep 2
+      nohup node backend/index.js > backend.log 2>&1 &
 
-                echo "🛑 Killing existing backend (if any)..."
-                pkill node || true
+      # ✅ Corrected: Bash-style comment
+      ps aux | grep node | grep -v grep
+    '''
+  }
+}
 
-                echo "🟢 Starting backend with nohup..."
-                nohup node backend/index.js > backend.log 2>&1 &
-                sleep 2
-                ps aux | grep node  // Check if backend started successfully
-
-                echo "🧹 Cleaning old frontend build..."
-                sudo rm -rf /var/www/html/*
-
-                echo "📁 Copying new frontend build..."
-                sudo cp -r frontend/build/* /var/www/html/
-
-                echo "✅ Deployment complete."
-                '''
-            }
-        }
     }
 
     post {
