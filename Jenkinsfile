@@ -26,19 +26,15 @@ pipeline {
         }
 
         stage('Build Frontend') {
-    steps {
-        dir('frontend') {
-            script {
-                if (fileExists('package.json')) {
+            steps {
+                dir('frontend') {
                     echo '📦 Installing frontend dependencies...'
                     sh 'npm install --legacy-peer-deps'
-                } else {
-                    error "❌ package.json not found in frontend!"
+                    echo '🔧 Building React frontend...'
+                    sh 'npm run build'
                 }
             }
         }
-    }
-}
 
         stage('Deploy') {
   steps {
